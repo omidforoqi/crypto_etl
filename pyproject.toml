@@ -1,0 +1,27 @@
+[project]
+name = "crypto_etl"
+version = "0.1.0"
+description = "ETL process and visualization of one week in crypto market"
+authors = [
+    {name = "Omid Foroughi", email = "foroqi@proton.me"},
+]
+dependencies = [
+    "requests>=2.32.3",
+    "rich>=13.7.1",
+    "clickhouse-connect>=0.7.14",
+]
+
+[project.scripts]
+start-etl = "src.crypto_etl.crawler_scripts:main"
+
+requires-python = ">=3.12"
+readme = "README.md"
+license = {text = "MIT"}
+
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+
+[tool.pdm]
+distribution = true
