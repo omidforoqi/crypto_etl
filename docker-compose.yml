@@ -1,0 +1,74 @@
+version: '3.9'
+services:
+  clickhouse:
+    image: 'clickhouse/clickhouse-server:latest'
+    user: '101:101'
+    container_name: clickhouse
+    hostname: clickhouse
+    ports:
+      - '8123:8123'
+      - '9000:9000'
+    volumes:
+      - clickhouse-data:/var/lib/clickhouse
+      - ./setup.sql:/docker-entrypoint-initdb.d/asetup.sql
+      - ./transactions_dump.sql:/docker-entrypoint-initdb.d/transactions_dump.sql
+      - ./bitstamp_dump.sql:/docker-entrypoint-initdb.d/bitstamp_dump.sql
+
+    depends_on:
+      - clickhouse-keeper
+    networks:
+      - metanet
+
+  clickhouse-keeper:
+    image: 'clickhouse/clickhouse-keeper:latest-alpine'
+    user: '101:101'
+    container_name: clickhouse-keeper
+    hostname: clickhouse-keeper
+    ports:
+      - '9181:9181'
+    volumes:
+      - keeper-data:/var/lib/clickhouse-keeper
+    networks:
+      - metanet
+  metabase:
+    image: 'metabase/metabase:latest'
+    container_name: metabase
+    hostname: metabase
+    ports:
+      - '3000:3000'
+    volumes:
+      - /dev/urandom:/dev/random:ro
+      - ./clickhouse.metabase-driver.jar:/plugins/clickhouse.metabase-driver.jar
+    networks:
+      - metanet
+    environment:
+      MB_DB_TYPE: postgres
+      MB_DB_DBNAME: metabaseappdb
+      MB_DB_PORT: 5432
+      MB_DB_USER: metabase
+      MB_DB_PASS: mysecretpassword
+      MB_DB_HOST: postgres
+    healthcheck:
+      test: curl --fail -I http://localhost:3000/api/health || exit 1
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    hostname: postgres
+    environment:
+      POSTGRES_USER: metabase
+      POSTGRES_DB: metabaseappdb
+      POSTGRES_PASSWORD: mysecretpassword
+    networks:
+      - metanet
+
+networks:
+  metanet:
+    driver: bridge
+
+volumes:
+  clickhouse-data:
+  keeper-data:
