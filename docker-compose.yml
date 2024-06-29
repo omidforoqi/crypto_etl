@@ -10,9 +10,10 @@ services:
       - '9000:9000'
     volumes:
       - clickhouse-data:/var/lib/clickhouse
+      - ./users.xml:/etc/clickhouse-server/users.xml
       - ./setup.sql:/docker-entrypoint-initdb.d/asetup.sql
-      - ./transactions_dump.sql:/docker-entrypoint-initdb.d/transactions_dump.sql
-      - ./bitstamp_dump.sql:/docker-entrypoint-initdb.d/bitstamp_dump.sql
+      # - ./transactions_dump.sql:/docker-entrypoint-initdb.d/transactions_dump.sql
+      # - ./bitstamp_dump.sql:/docker-entrypoint-initdb.d/bitstamp_dump.sql
 
     depends_on:
       - clickhouse-keeper
