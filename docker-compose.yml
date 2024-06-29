@@ -30,6 +30,7 @@ services:
       - keeper-data:/var/lib/clickhouse-keeper
     networks:
       - metanet
+  
   metabase:
     image: 'metabase/metabase:latest'
     container_name: metabase
@@ -64,6 +65,23 @@ services:
       POSTGRES_PASSWORD: mysecretpassword
     networks:
       - metanet
+  
+  mageai:
+    image: mageai/mageai:latest
+    command: mage start ${PROJECT_NAME}
+    env_file:
+      - .env
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      USER_CODE_PATH: /home/src/${PROJECT_NAME}
+      ENV: ${ENV}
+    ports:
+      - 6789:6789
+    volumes:
+      - .:/home/src/
+    restart: on-failure:5
 
 networks:
   metanet:
