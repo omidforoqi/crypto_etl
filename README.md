@@ -1,7 +1,12 @@
 # crypto_etl
+crypto transactions data is from https://www.bitstamp.net
+
+
 for running project run first this command
 
-```echo "PROJECT_NAME=bit" >> .env```
+```bash
+echo "PROJECT_NAME=bit" >> .env
+```
 
 ```bash
 docker compose up -d
