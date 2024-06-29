@@ -64,6 +64,8 @@ services:
       POSTGRES_USER: metabase
       POSTGRES_DB: metabaseappdb
       POSTGRES_PASSWORD: mysecretpassword
+    volumes:
+      - ./metabase_dump.sql:/docker-entrypoint-initdb.d/metabase_dump.sql
     networks:
       - metanet
   
@@ -72,9 +74,6 @@ services:
     command: mage start ${PROJECT_NAME}
     env_file:
       - .env
-    build:
-      context: .
-      dockerfile: Dockerfile
     environment:
       USER_CODE_PATH: /home/src/${PROJECT_NAME}
       ENV: ${ENV}
