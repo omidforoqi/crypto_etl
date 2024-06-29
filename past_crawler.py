@@ -157,5 +157,6 @@ def main():
         for symbol in symbols:
             transaction = bitstamp_client.fetch_transactions(market_symbol=symbol, time="day")
             clickhouse_client.insert("crypto_db.transactions", transaction, column_names=["coin_name", "amount", "timestamp", "price", "type"])
+
 if __name__ == "__main__":
     main()
